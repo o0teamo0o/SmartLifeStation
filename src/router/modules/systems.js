@@ -22,7 +22,7 @@ const systemsRouter = {
         },
         {
             path: 'log-on',
-            name: 'Log-on',
+            name: 'LogOn',
             component: () =>
                 import ('@/views/systems/log-on/index'),
             meta: {

@@ -32,7 +32,7 @@ const financeRouter = {
         },
         {
             path: 'housing-estate',
-            name: 'Housing-estate',
+            name: 'HousingEstate',
             component: () =>
                 import ('@/views/finance/housing-estate/index'),
             meta: {
@@ -42,7 +42,7 @@ const financeRouter = {
         },
         {
             path: 'bike-shed',
-            name: 'Bike-shed',
+            name: 'BikeShed',
             component: () =>
                 import ('@/views/finance/bike-shed/index'),
             meta: {

@@ -12,7 +12,7 @@ const basicsRouter = {
     },
     children: [{
             path: 'housing-estate',
-            name: 'Housing-estate',
+            name: 'HousingEstate',
             component: () =>
                 import ('@/views/basics/housing-estate/index'),
             meta: {
@@ -22,7 +22,7 @@ const basicsRouter = {
         },
         {
             path: 'bike-shed',
-            name: 'Bike-shed',
+            name: 'BikeShed',
             component: () =>
                 import ('@/views/basics/bike-shed/index'),
             meta: {
@@ -52,7 +52,7 @@ const basicsRouter = {
         },
         {
             path: 'qr-code',
-            name: 'QR-code',
+            name: 'QRCode',
             component: () =>
                 import ('@/views/basics/qr-code/index'),
             meta: {
