@@ -15,7 +15,7 @@
       <div class="flex-1"></div>
       <el-button type="success">新增</el-button>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="housingEstateList" border style="width: 100%">
       <el-table-column prop="province" label="省" width="180">
       </el-table-column>
       <el-table-column prop="city" label="市" width="180"> </el-table-column>
@@ -53,7 +53,8 @@ export default {
   name: "HousingEstate",
   data() {
     return {
-      searchKey: ""
+      searchKey: "", //搜索关键字
+      housingEstateList: null //小区集合
     };
   },
   mounted() {},

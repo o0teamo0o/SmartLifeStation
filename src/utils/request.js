@@ -8,13 +8,19 @@ const service = axios.create({
     // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
     baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
     // withCredentials: true, // send cookies when cross-domain requests
-    timeout: 5000 // request timeout
+    timeout: 60000, // 请求超时时间
+    //设置默认请求头，使post请求发送的是formdata格式数据// axios的header默认的Content-Type好像是'application/json;charset=UTF-8',我的项目都是用json格式传输，如果需要更改的话，可以用这种方式修改
+    headers: {
+        "Content-Type": "application/json;charset=UTF-8"
+    },
+    withCredentials: true // 允许携带cookie
 })
 
 // request interceptor
 service.interceptors.request.use(
     config => {
-        // do something before request is sent
+        console.error("config:", config)
+            // do something before request is sent
 
         if (store.getters.token) {
             // let each request carry token
@@ -45,6 +51,7 @@ service.interceptors.response.use(
      */
     response => {
         const res = response.data
+        console.error("res:", response.data)
 
         // if the custom code is not 20000, it is judged as an error.
         if (res.code !== 20000) {
@@ -73,7 +80,7 @@ service.interceptors.response.use(
         }
     },
     error => {
-        console.log('err' + error) // for debug
+        console.error('err' + error) // for debug
         Message({
             message: error.message,
             type: 'error',
