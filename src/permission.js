@@ -23,7 +23,15 @@ router.beforeEach(async(to, from, next) => {
     document.title = getPageTitle(to.meta.title)
 
     // 确定用户是否已登录 这里的getToken()就是在上面导入的auth.js里的getToken()方法
-    const hasToken = getToken()
+    var hasToken = getToken()
+
+    if (to.path == "/login") {
+        hasToken = false;
+    } else {
+        hasToken = true;
+    }
+
+    console.error("path:", to.path)
 
     //如果存在token，即存在已登陆的令牌
     if (hasToken) {
@@ -34,6 +42,12 @@ router.beforeEach(async(to, from, next) => {
                 //一定要关闭进度条
             NProgress.done()
         } else {
+
+
+            //信息拿到后，用户请求哪就跳转哪
+            next()
+            return;
+
             //如果已经有令牌的用户请求的不是登录页，是其他页面
             //就从Vuex里拿到用户的信息，这里也证明用户不是第一次登录了
             const hasGetUserInfo = store.getters.name
