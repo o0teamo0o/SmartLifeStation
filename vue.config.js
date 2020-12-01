@@ -6,14 +6,14 @@ function resolve(dir) {
     return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Element Admin' // page title
+const name = defaultSettings.title || 'vue Admin Template' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
 // For example, Mac: sudo npm run
-// You can change the port by the following method:
-// port = 9527 npm run dev OR npm run dev --port = 9527
-const port = process.env.port || process.env.npm_config_port || 9527 // dev port
+// You can change the port by the following methods:
+// port = 9528 npm run dev OR npm run dev --port = 9528
+const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -24,33 +24,27 @@ module.exports = {
      * In most cases please use '/' !!!
      * Detail: https://cli.vuejs.org/config/#publicpath
      */
-    publicPath: '/', //基本路径
-    outputDir: 'dist', //构建时输出目录
-    assetsDir: 'static', //防止静态资源目录
-    lintOnSave: process.env.NODE_ENV === 'development', //是否在保存的时候使用 `eslint-loader` 进行检查。
-    productionSourceMap: false, //如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
-    /**所有 webpack-dev-server 的选项都支持 */
+    publicPath: '/',
+    outputDir: 'dist', //build输出目录
+    assetsDir: 'static', //静态资源目录（js, css, img）
+    lintOnSave: process.env.NODE_ENV === 'development', //是否开启eslint
+    productionSourceMap: false,
     devServer: {
-        port: port,
-        open: true,
-        // https: true,
+        port: port, // 设置端口号
+        open: true, //是否自动弹出浏览器页面
+        https: true, //是否使用https协议
+        hotOnly: false, //是否开启热更新
         overlay: {
             warnings: false,
             errors: true
         },
-        /**如果你的前端应用和后端 API 服务器没有运行在同一个主机上，你需要在开发环境下将 API 请求代理到 API 服务器。这个问题可以通过 vue.config.js 中的 devServer.proxy 选项来配置。 */
         proxy: {
-            // change xxx-api/login => mock/login
-            // detail: https://cli.vuejs.org/config/#devserver-proxy
-            [process.env.VUE_APP_BASE_API]: {
-                target: `https://www.fastmock.site/mock/58b3b7dc320fd9f3d16430ff95be8fa2`,
-                changeOrigin: true,
-                pathRewrite: {
-                    ['^' + process.env.VUE_APP_BASE_API]: ''
-                }
+            '/api': {
+                target: 'https://www.fastmock.site/mock/58b3b7dc320fd9f3d16430ff95be8fa2/life', // 目标 API 地址
+                ws: true, // 如果要代理 websockets
+                changeOrigin: true, // 是否跨域，虚拟的站点需要更管origin
             }
         },
-        // after: require('./mock/mock-server.js')
         // before: require('./mock/mock-server.js')
     },
     configureWebpack: {
@@ -64,7 +58,6 @@ module.exports = {
         }
     },
     chainWebpack(config) {
-        // it can improve the speed of the first screen, it is recommended to turn on preload
         // it can improve the speed of the first screen, it is recommended to turn on preload
         config.plugin('preload').tap(() => [{
             rel: 'preload',

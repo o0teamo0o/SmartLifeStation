@@ -166,7 +166,7 @@ module.exports = {
             'avoidEscape': true,
             'allowTemplateLiterals': true
         }],
-        'semi': [2, 'never'],
+        'semi': 0, //如果我们希望要使用分号，则在 rules 字段增加配置：'semi': ["error", "always"]  | 如果你希望 eslint 不检查分号这一项，这个时候结尾的分号 'semi': 0
         'semi-spacing': [2, {
             'before': false,
             'after': true
@@ -194,6 +194,7 @@ module.exports = {
             objectsInObjects: false
         }],
         'array-bracket-spacing': [2, 'never'],
-        'space-before-function-paren': 0
+        'space-before-function-paren': 0,
+        "indent": ["off", 2]
     }
 }
