@@ -127,6 +127,10 @@ export default {
       var that = this;
       console.error("eeeee");
 
+      // that.$router.push({ path: "/" });
+      // console.error("11111:", that.$router);
+      // return;
+
       this.loading = true;
       goLogin().then(result => {
         console.error("result:", result);

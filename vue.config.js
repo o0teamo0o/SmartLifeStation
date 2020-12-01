@@ -27,7 +27,8 @@ module.exports = {
     publicPath: '/',
     outputDir: 'dist', //build输出目录
     assetsDir: 'static', //静态资源目录（js, css, img）
-    lintOnSave: process.env.NODE_ENV === 'development', //是否开启eslint
+    // lintOnSave: process.env.NODE_ENV === 'development', //是否开启eslint
+    lintOnSave: false, //是否开启eslint
     productionSourceMap: false,
     devServer: {
         port: port, // 设置端口号
