@@ -25,11 +25,11 @@ router.beforeEach(async(to, from, next) => {
     // 确定用户是否已登录 这里的getToken()就是在上面导入的auth.js里的getToken()方法
     var hasToken = getToken()
 
-    if (to.path == "/login") {
-        hasToken = false;
-    } else {
-        hasToken = true;
-    }
+    // if (to.path == "/login") {
+    //     hasToken = false;
+    // } else {
+    //     hasToken = true;
+    // }
 
     console.error("path:", to.path)
 

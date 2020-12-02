@@ -13,7 +13,7 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
+const port = process.env.port || process.env.npm_config_port || 9000 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
     devServer: {
         port: port, // 设置端口号
         open: true, //是否自动弹出浏览器页面
-        https: true, //是否使用https协议
+        https: false, //是否使用https协议
         hotOnly: false, //是否开启热更新
         overlay: {
             warnings: false,
@@ -41,7 +41,7 @@ module.exports = {
         },
         proxy: {
             '/api': {
-                target: 'https://www.fastmock.site/mock/58b3b7dc320fd9f3d16430ff95be8fa2/life', // 目标 API 地址
+                target: 'http://api.liya.group:9000', // 目标 API 地址
                 ws: true, // 如果要代理 websockets
                 changeOrigin: true, // 是否跨域，虚拟的站点需要更管origin
             }

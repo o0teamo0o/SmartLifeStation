@@ -30,10 +30,10 @@ const mutations = {
 const actions = {
     // user login
     login({ commit }, userInfo) {
-        const { username, password } = userInfo
+        const { userName, passWord } = userInfo
         return new Promise((resolve, reject) => {
             //发送了网络请求，进行了登录操作
-            login({ username: username.trim(), password: password }).then(response => {
+            login({ userName: userName.trim(), passWord: passWord }).then(response => {
                 const { data } = response
                 console.error("response:", response)
                 commit('SET_TOKEN', data.token)
@@ -69,14 +69,18 @@ const actions = {
     // user logout
     logout({ commit, state }) {
         return new Promise((resolve, reject) => {
-            logout(state.token).then(() => {
-                removeToken() // must remove  token  first
-                resetRouter()
-                commit('RESET_STATE')
-                resolve()
-            }).catch(error => {
-                reject(error)
-            })
+            removeToken() // must remove  token  first
+            resetRouter()
+            commit('RESET_STATE')
+            resolve()
+                // logout(state.token).then(() => {
+                //     removeToken() // must remove  token  first
+                //     resetRouter()
+                //     commit('RESET_STATE')
+                //     resolve()
+                // }).catch(error => {
+                //     reject(error)
+                // })
         })
     },
 

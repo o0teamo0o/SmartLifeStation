@@ -30,11 +30,13 @@ export default {
     getBreadcrumb() {
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
+      console.error("matched:", matched)
       const first = matched[0]
 
-      if (!this.isHome(first)) {
-        matched = [{ path: '/home', meta: { title: '工作台' }}].concat(matched)
-      }
+      //去除固定位置
+      // if (!this.isHome(first)) {
+      //   matched = [{ path: '/home', meta: { title: '工作台' }}].concat(matched)
+      // }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     },
