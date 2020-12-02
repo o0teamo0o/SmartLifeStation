@@ -20,31 +20,31 @@
       </el-table-column>
       <el-table-column prop="city" label="市" min-width="100">
       </el-table-column>
-      <el-table-column prop="area" label="区" min-width="100">
+      <el-table-column prop="region" label="区" min-width="100">
       </el-table-column>
-      <el-table-column prop="communityName" label="小区名称" min-width="200">
+      <el-table-column prop="houseName" label="小区名称" min-width="200">
       </el-table-column>
-      <el-table-column prop="address" label="小区地址" min-width="300">
+      <el-table-column prop="houseAddr" label="小区地址" min-width="300">
+      </el-table-column>
+      <el-table-column prop="housePhone" label="小区联系电话" min-width="120">
       </el-table-column>
       <el-table-column
-        prop="communityNumber"
-        label="小区联系电话"
+        prop="houseContractorName"
+        label="小区联系人"
         min-width="120"
       >
       </el-table-column>
-      <el-table-column prop="contacts" label="小区联系人" min-width="120">
-      </el-table-column>
-      <el-table-column prop="personnel" label="运维负责人" min-width="120">
+      <el-table-column prop="operationsName" label="运维负责人" min-width="120">
       </el-table-column>
       <el-table-column
-        prop="personnelNumber"
+        prop="operationsPhone"
         label="运维负责人电话"
         min-width="120"
       >
       </el-table-column>
-      <el-table-column prop="time" label="加入时间" min-width="120">
+      <el-table-column prop="createTime" label="加入时间" min-width="120">
       </el-table-column>
-      <el-table-column prop="operation" label="操作" min-width="120">
+      <el-table-column prop="operation" label="操作" min-width="150">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
             >编辑</el-button
@@ -62,13 +62,15 @@
 </template>
 
 <script>
-import { getHousingEstateList } from "@/api/basics/housingEstate";
+import { queryRegionHousePage } from "@/api/basics/housingEstate";
 
 export default {
   name: "HousingEstate",
   data() {
     return {
       searchKey: "", //搜索关键字
+      pageSize: 10, //分页大小
+      pageNo: 1, //分页页码
       housingEstateList: null //小区集合
     };
   },
@@ -78,8 +80,11 @@ export default {
   },
   methods: {
     onLoadHousingEstateData() {
-      getHousingEstateList().then(result => {
-        console.error("result:", result);
+      var that = this;
+      queryRegionHousePage().then(result => {
+        if (result.rows.length > 0) {
+          that.housingEstateList = result.rows;
+        }
       });
     }
   }

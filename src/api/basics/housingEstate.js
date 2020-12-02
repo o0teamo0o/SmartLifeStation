@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export function getHousingEstateList(query) {
+export function queryRegionHousePage(query) {
     return request({
-        url: '/getHousingEstateList',
-        method: 'post',
+        url: '/regionHouse/queryRegionHousePage',
+        method: 'get',
         params: query
     })
 }
