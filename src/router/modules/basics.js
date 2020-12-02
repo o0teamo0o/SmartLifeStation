@@ -4,7 +4,7 @@ import Layout from '@/layout'
 const basicsRouter = {
     path: '/basics',
     component: Layout,
-    redirect: '', //重定向地址，在面包屑中点击会重定向去的地址
+    redirect: '/basics/housing-estate', //重定向地址，在面包屑中点击会重定向去的地址
     name: 'Basics', // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
     meta: {
         title: '基础数据', // 设置该路由在侧边栏和面包屑中展示的名字

@@ -5,7 +5,7 @@ import Layout from '@/layout'
 const gateRouter = {
     path: '/gate',
     component: Layout,
-    redirect: '', //重定向地址，在面包屑中点击会重定向去的地址
+    redirect: '/gate/examine', //重定向地址，在面包屑中点击会重定向去的地址
     name: 'Gate', // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
     meta: {
         title: '闸机管理', // 设置该路由在侧边栏和面包屑中展示的名字

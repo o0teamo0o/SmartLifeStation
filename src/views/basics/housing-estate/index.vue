@@ -6,6 +6,7 @@
         class="input-search"
         v-model="searchKey"
         placeholder="请输入小区名称"
+        clearable
       >
         <i slot="prefix" class="el-input__icon el-icon-search"></i>
       </el-input>
@@ -24,7 +25,7 @@
       fit
       highlight-current-row
       style="width: 100%"
-      v-loading="listLoading"
+      v-loading="housingEstateListLoading"
     >
       <el-table-column prop="province" label="省" min-width="100">
       </el-table-column>
@@ -78,30 +79,39 @@
       :limit.sync="pageSize"
       @pagination="onLoadHousingEstateData"
     />
+
+    <el-dialog title="新增小区" :visible.sync="isShowDialogAddHousingEstate">
+      <div>我在这里</div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 
-import { queryRegionHousePage } from "@/api/basics/housingEstate";
+import { queryRegionHousePage, queryAllProvince } from "@/api/basics/housingEstate";
 
 export default {
   name: "HousingEstate",
   data() {
     return {
       searchKey: "", //搜索关键字
+      housingEstateListLoading: true, //表单加载状态控制
       total: 0, //总页数
       pageSize: 10, //分页大小
       pageNo: 1, //分页页码
       housingEstateList: null, //小区集合
-      housingEstateListKey: 0, //
+      housingEstateListKey: 0, //更新列表的key
+      isShowDialogAddHousingEstate: false //是否显示新增小区对话框
     };
   },
   components: { Pagination },
   mounted() {},
   created() {
+    //加载小区
     this.onLoadHousingEstateData();
+    //加载省份
+    this.onLoadAllProvinceData();
   },
   methods: {
     /**获取小区列表 */
@@ -116,10 +126,9 @@ export default {
       if (!this.isEmpty(this.searchKey)) {
         queryData.houseName = this.searchKey;
       }
-
-      console.error("请求入参:", queryData);
-
+      this.housingEstateListLoading = true;
       queryRegionHousePage(queryData).then(result => {
+        that.housingEstateListLoading = false;
         that.total = result.count; //统计总数
         that.housingEstateList = result.rows;
       });
@@ -129,7 +138,16 @@ export default {
     onHousingEstateEdit() {},
 
     /**新增小区资料 */
-    onHousingEstateAdd() {}
+    onHousingEstateAdd() {
+      this.isShowDialogAddHousingEstate = true;
+    },
+
+    /**加载所有省份 */
+    onLoadAllProvinceData() {
+      var that = this;
+      queryAllProvince().then(result => {
+      });
+    }
   }
 };
 </script>

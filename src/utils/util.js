@@ -1,3 +1,8 @@
+/**
+ * 工具类
+ * @param {*} Vue 
+ * @param {*} options 
+ */
 exports.install = function(Vue, options) {
 
     /**
