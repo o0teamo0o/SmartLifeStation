@@ -15,6 +15,10 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+
+import utils from './utils/util.js' //引用工具类
+Vue.use(utils);
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -28,10 +32,8 @@ import '@/permission' // permission control
 //   mockXHR()
 // }
 
-// set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
-    // 如果想要中文版 element-ui，按如下方式声明
-    // Vue.use(ElementUI)
+// 如果想要中文版 element-ui，按如下方式声明
+Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
