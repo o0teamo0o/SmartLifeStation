@@ -43,3 +43,14 @@ export function queryRegionByCity(query) {
         params: query
     })
 }
+
+/**
+ * 新增小区
+ */
+export function saveRegionHouse(data) {
+    return request({
+        url: '/regionHouse/saveRegionHouse',
+        method: 'post',
+        data
+    })
+}

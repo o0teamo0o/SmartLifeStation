@@ -35,7 +35,6 @@ const actions = {
             //发送了网络请求，进行了登录操作
             login({ userName: userName.trim(), passWord: passWord }).then(response => {
                 const { data } = response
-                console.error("response:", response)
                 commit('SET_TOKEN', data.token)
                 setToken(data.token)
                 resolve()
