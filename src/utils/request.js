@@ -52,11 +52,11 @@ service.interceptors.response.use(
             return res
         } else {
             Message({
-                message: res.message || 'Error',
+                message: res.resInfo || 'Error',
                 type: 'error',
                 duration: 5 * 1000
             })
-            return Promise.reject(new Error(res.message || 'Error'))
+            return Promise.reject(new Error(res.resInfo || 'Error'))
         }
 
         // if the custom resCode is not 20000, it is judged as an error.

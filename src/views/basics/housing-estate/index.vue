@@ -65,7 +65,7 @@
           <el-button
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
+            @click="onHousingEstateDelete(scope.$index, scope.row)"
             >删除</el-button
           >
         </template>
@@ -137,36 +137,42 @@
           <el-input
             v-model="NewHousingEstate.houseName"
             placeholder="请输入小区名字"
+            clearable
           />
         </el-form-item>
         <el-form-item label="小区地址" prop="houseAddr">
           <el-input
             v-model="NewHousingEstate.houseAddr"
             placeholder="请输入小区地址"
+            clearable
           />
         </el-form-item>
         <el-form-item label="小区联系电话" prop="housePhone">
           <el-input
             v-model="NewHousingEstate.housePhone"
             placeholder="请输入小区联系电话"
+            clearable
           />
         </el-form-item>
         <el-form-item label="小区负责人" prop="houseContractorName">
           <el-input
             v-model="NewHousingEstate.houseContractorName"
             placeholder="请输入小区负责人"
+            clearable
           />
         </el-form-item>
         <el-form-item label="运维负责人" prop="operationsName">
           <el-input
             v-model="NewHousingEstate.operationsName"
             placeholder="请输入运维负责人"
+            clearable
           />
         </el-form-item>
         <el-form-item label="运维负责人电话" prop="operationsPhone">
           <el-input
             v-model="NewHousingEstate.operationsPhone"
             placeholder="请输入运维负责人电话"
+            clearable
           />
         </el-form-item>
         <el-form-item label="备注" prop="bak">
@@ -182,10 +188,8 @@
         <el-button @click="isShowDialogAddHousingEstate = false">
           取消
         </el-button>
-        <el-button
-          type="primary"
-          @click="dialogStatus === 'add' ? onAddHousingEstate() : onUpdateHousingEstate()"
-        >
+        <el-button type="primary" 
+          @click="dialogStatus === 'add' ? onAddHousingEstate() : onUpdateHousingEstate()">
           添加
         </el-button>
       </div>
@@ -195,6 +199,7 @@
 
 <script>
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import { getToken } from '@/utils/auth'
 
 import {
   queryRegionHousePage, //加载小区列表
@@ -202,6 +207,8 @@ import {
   queryCityByProvince, //加载市
   queryRegionByCity, //加载区
   saveRegionHouse, //新增小区
+  delRegionHouse, //删除小区
+  updateRegionHouse, //更新小区
 } from "@/api/basics/housingEstate";
 
 export default {
@@ -280,7 +287,11 @@ export default {
     },
 
     /**编辑小区资料 */
-    onHousingEstateEdit() {},
+    onHousingEstateEdit(index, item) {
+        this.dialogStatus = "update";
+        this.isShowDialogAddHousingEstate = true;
+        this.NewHousingEstate = item;
+    },
 
     /**新增小区资料 */
     onHousingEstateAdd() {
@@ -296,7 +307,7 @@ export default {
     /**新增小区 */
     onAddHousingEstate() {
       var that = this;
-      this.$refs['addHousingEstateRef'].validate((valid) => {
+      this.$refs["addHousingEstateRef"].validate(valid => {
         if (valid) {
           var queryData = {
             province: that.NewHousingEstate.province,
@@ -308,26 +319,82 @@ export default {
             houseContractorName: that.NewHousingEstate.houseContractorName,
             operationsName: that.NewHousingEstate.operationsName,
             operationsPhone: that.NewHousingEstate.operationsPhone,
-            bak: that.NewHousingEstate.bak,
+            bak: that.NewHousingEstate.bak
           };
 
           saveRegionHouse(queryData).then(result => {
-                that.housingEstateList.unshift(this.NewHousingEstate);
-                that.isShowDialogAddHousingEstate = false;
-                this.$notify({
-                  title: '温馨提示',
-                  message: '小区添加成功!',
-                  type: 'success',
-                  duration: 2000
-                })
+            that.housingEstateList.unshift(this.NewHousingEstate);
+            that.isShowDialogAddHousingEstate = false;
+            this.$notify({
+              title: "温馨提示",
+              message: "小区添加成功!",
+              type: "success",
+              duration: 2000
+            });
           });
         }
-      })
+      });
     },
 
     /**更新小区 */
-    onUpdateHousingEstate(){
+    onUpdateHousingEstate() {
+      var that = this;
 
+      var token = getToken();
+      this.$refs['addHousingEstateRef'].validate((valid) => {
+        if (valid) {
+
+          var queryData = {
+            id: that.NewHousingEstate.id,
+            province: that.NewHousingEstate.province,
+            city: that.NewHousingEstate.city,
+            region: that.NewHousingEstate.region,
+            houseName: that.NewHousingEstate.houseName,
+            houseAddr: that.NewHousingEstate.houseAddr,
+            housePhone: that.NewHousingEstate.housePhone,
+            houseContractorName: that.NewHousingEstate.houseContractorName,
+            operationsName: that.NewHousingEstate.operationsName,
+            operationsPhone: that.NewHousingEstate.operationsPhone,
+            bak: that.NewHousingEstate.bak
+          };
+
+          updateRegionHouse(queryData, token).then(result => {
+            const index = that.housingEstateList.findIndex(v => v.id === that.NewHousingEstate.id)
+            that.housingEstateList.splice(index, 1, that.NewHousingEstate)
+            that.isShowDialogAddHousingEstate = false;
+            that.$notify({
+              title: "温馨提示",
+              message: "小区更新成功!",
+              type: "success",
+              duration: 2000
+            });
+          });
+        }
+      });
+    },
+
+    /**删除小区 */
+    onHousingEstateDelete(index, item) {
+      var that = this;
+
+      this.$confirm("是否删除该小区信息?", "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          var queryData = {
+            regionHouseId: item.id
+          };
+          delRegionHouse(queryData).then(result => {
+            that.housingEstateList.splice(index, 1);
+          });
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {});
     },
 
     /**加载所有省份 */

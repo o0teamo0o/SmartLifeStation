@@ -124,20 +124,6 @@ export default {
       });
     },
     handleLogin() {
-      var that = this;
-      console.error("eeeee");
-
-      // that.$router.push({ path: "/" });
-      // console.error("11111:", that.$router);
-      // return;
-
-      // this.loading = true;
-      // goLogin().then(result => {
-      //   console.error("result:", result);
-      //   that.loading = false;
-      //   that.$router.push({ path: that.redirect || "/" });
-      // });
-
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
