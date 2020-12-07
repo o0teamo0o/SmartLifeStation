@@ -14,7 +14,7 @@
       <el-button type="primary" @click="onLoadHousingEstateData"
         >搜索</el-button
       >
-      <el-button>重置</el-button>
+      <el-button @click="onReset">重置</el-button>
       <div class="flex-1"></div>
       <el-button type="success" @click="onHousingEstateAdd">新增</el-button>
     </div>
@@ -53,14 +53,25 @@
         min-width="120"
       >
       </el-table-column>
-      <el-table-column prop="createTime" label="加入时间" min-width="120">
+      <el-table-column prop="createTime" label="加入时间" min-width="160">
       </el-table-column>
-      <el-table-column prop="operation" label="操作" min-width="150">
+      <el-table-column
+        fixed="right"
+        prop="operation"
+        label="操作"
+        min-width="250"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             @click="onHousingEstateEdit(scope.$index, scope.row)"
             >编辑</el-button
+          >
+          <el-button
+            size="mini"
+            type="primary"
+            @click="onShowAddBikeShedDialog(scope.$index, scope.row)"
+            >新增车棚</el-button
           >
           <el-button
             size="mini"
@@ -85,15 +96,16 @@
         ref="addHousingEstateRef"
         :rules="addHousingEstateRules"
         :model="NewHousingEstate"
-        label-position="left"
-        label-width="130px"
+        label-position="right"
+        label-width="140px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="小区所在省" prop="province">
+        <el-form-item label="小区所在省：" prop="province">
           <el-select
             v-model="NewHousingEstate.province"
             class="filter-item"
             placeholder="请选择所在省份"
+            v-bind:disabled="dialogStatus == 'update'"
             @change="onProvinceSelectChange"
           >
             <el-option
@@ -104,11 +116,12 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="小区所在市" prop="city">
+        <el-form-item label="小区所在市：" prop="city">
           <el-select
             v-model="NewHousingEstate.city"
             class="filter-item"
             placeholder="请选择所在市"
+            v-bind:disabled="dialogStatus == 'update'"
             @change="onCitySelectChange"
           >
             <el-option
@@ -119,10 +132,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="小区所在区" prop="region">
+        <el-form-item label="小区所在区：" prop="region">
           <el-select
             v-model="NewHousingEstate.region"
             class="filter-item"
+            v-bind:disabled="dialogStatus == 'update'"
             placeholder="请选择所在区"
           >
             <el-option
@@ -133,49 +147,51 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="小区名字" prop="houseName">
+        <el-form-item label="小区名字：" prop="houseName">
           <el-input
             v-model="NewHousingEstate.houseName"
             placeholder="请输入小区名字"
             clearable
           />
         </el-form-item>
-        <el-form-item label="小区地址" prop="houseAddr">
+        <el-form-item label="小区地址：" prop="houseAddr">
           <el-input
             v-model="NewHousingEstate.houseAddr"
             placeholder="请输入小区地址"
             clearable
           />
         </el-form-item>
-        <el-form-item label="小区联系电话" prop="housePhone">
+        <el-form-item label="小区联系电话：" prop="housePhone">
           <el-input
             v-model="NewHousingEstate.housePhone"
             placeholder="请输入小区联系电话"
+            maxlength="12"
             clearable
           />
         </el-form-item>
-        <el-form-item label="小区负责人" prop="houseContractorName">
+        <el-form-item label="小区负责人：" prop="houseContractorName">
           <el-input
             v-model="NewHousingEstate.houseContractorName"
-            placeholder="请输入小区负责人"
+            placeholder="请输入小区负责人姓名"
             clearable
           />
         </el-form-item>
-        <el-form-item label="运维负责人" prop="operationsName">
+        <el-form-item label="运维负责人：" prop="operationsName">
           <el-input
             v-model="NewHousingEstate.operationsName"
-            placeholder="请输入运维负责人"
+            placeholder="请输入运维负责人姓名"
             clearable
           />
         </el-form-item>
-        <el-form-item label="运维负责人电话" prop="operationsPhone">
+        <el-form-item label="运维负责人电话：" prop="operationsPhone">
           <el-input
             v-model="NewHousingEstate.operationsPhone"
             placeholder="请输入运维负责人电话"
+            maxlength="12"
             clearable
           />
         </el-form-item>
-        <el-form-item label="备注" prop="bak">
+        <el-form-item label="备注：" prop="bak">
           <el-input
             v-model="NewHousingEstate.bak"
             placeholder="请输入备注"
@@ -188,8 +204,74 @@
         <el-button @click="isShowDialogAddHousingEstate = false">
           取消
         </el-button>
-        <el-button type="primary" 
-          @click="dialogStatus === 'add' ? onAddHousingEstate() : onUpdateHousingEstate()">
+        <el-button
+          type="primary"
+          @click="
+            dialogStatus === 'add'
+              ? onAddHousingEstate()
+              : onUpdateHousingEstate()
+          "
+        >
+          添加
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="新增车棚" :visible.sync="isShowDialogAddBikeShed">
+      <el-form
+        ref="addBikeShedRef"
+        :rules="addBikeShedRules"
+        :model="NewBikeShed"
+        label-position="right"
+        label-width="140px"
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="所属小区：" prop="houseName">
+          <el-input v-model="NewBikeShed.houseName" disabled clearable />
+        </el-form-item>
+        <el-form-item label="车棚名称：" prop="carName">
+          <el-input
+            v-model="NewBikeShed.carName"
+            placeholder="请输入车棚名称"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="车棚地址：" prop="carAddress">
+          <el-input
+            v-model="NewBikeShed.carAddress"
+            placeholder="请输入车棚地址"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="车棚负责人电话：" prop="operationsPhone">
+          <el-input
+            v-model="NewBikeShed.operationsPhone"
+            placeholder="请输入车棚负责人电话"
+            maxlength="12"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="车棚负责人：" prop="operationsName">
+          <el-input
+            v-model="NewBikeShed.operationsName"
+            placeholder="请输入车棚负责人姓名"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="备注：" prop="bak">
+          <el-input
+            v-model="NewBikeShed.bak"
+            placeholder="请输入备注"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowDialogAddBikeShed = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="onAddBikeShed()">
           添加
         </el-button>
       </div>
@@ -199,7 +281,7 @@
 
 <script>
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
-import { getToken } from '@/utils/auth'
+import { getToken } from "@/utils/auth";
 
 import {
   queryRegionHousePage, //加载小区列表
@@ -209,6 +291,7 @@ import {
   saveRegionHouse, //新增小区
   delRegionHouse, //删除小区
   updateRegionHouse, //更新小区
+  addCarPort //新增车棚
 } from "@/api/basics/housingEstate";
 
 export default {
@@ -228,6 +311,7 @@ export default {
       dialogStatus: "", //小区对话框状态  add: 新增 | update:更新
       isShowDialogAddHousingEstate: false, //是否显示新增小区对话框
       addHousingEstateRules: {
+        //新增小区表单验证规则
         province: [
           { required: true, message: "请选择所在省份", trigger: "change" }
         ],
@@ -245,16 +329,41 @@ export default {
           { required: true, message: "请输入小区联系电话", trigger: "blur" }
         ],
         houseContractorName: [
-          { required: true, message: "请输入小区联系人", trigger: "blur" }
+          { required: true, message: "请输入小区联系人姓名", trigger: "blur" }
         ],
         operationsName: [
-          { required: true, message: "请输入运维负责人", trigger: "blur" }
+          { required: true, message: "请输入运维负责人姓名", trigger: "blur" }
         ],
         operationsPhone: [
           { required: true, message: "请输入运维负责人电话", trigger: "blur" }
         ]
-      }, //表单验证规则
-      NewHousingEstate: {} //新增小区默认对象
+      },
+      NewHousingEstate: {}, //新增小区默认对象
+      isShowDialogAddBikeShed: false, //是否显示新增车棚对话框
+      addBikeShedRules: {
+        //新增车棚表单验证规则
+        carName: [
+          { required: true, message: "请输入车棚名称", trigger: "blur" }
+        ],
+        carAddress: [
+          { required: true, message: "请输入车棚地址", trigger: "blur" }
+        ],
+        operationsPhone: [
+          {
+            required: true,
+            message: "请输入车棚运维负责人电话",
+            trigger: "blur"
+          }
+        ],
+        operationsName: [
+          {
+            required: true,
+            message: "请输入车棚运维负责人姓名",
+            trigger: "blur"
+          }
+        ]
+      },
+      NewBikeShed: {} //新增车棚对象
     };
   },
   components: { Pagination },
@@ -279,22 +388,37 @@ export default {
         queryData.houseName = this.searchKey;
       }
       this.housingEstateListLoading = true;
-      queryRegionHousePage(queryData).then(result => {
-        that.housingEstateListLoading = false;
-        that.total = result.count; //统计总数
-        that.housingEstateList = result.rows;
-      });
+      queryRegionHousePage(queryData)
+        .then(result => {
+          that.housingEstateListLoading = false;
+          that.total = result.count; //统计总数
+          if (!that.isEmpty(result.rows)) {
+            result.rows.forEach(item => {
+              item.createTime = that.timeStampToStr(item.createTime, "-");
+            });
+          }
+          that.housingEstateList = result.rows;
+        })
+        .catch(err => {
+          that.housingEstateListLoading = false;
+        });
     },
 
     /**编辑小区资料 */
     onHousingEstateEdit(index, item) {
-        this.dialogStatus = "update";
-        this.isShowDialogAddHousingEstate = true;
-        this.NewHousingEstate = item;
+      this.dialogStatus = "update";
+      this.isShowDialogAddHousingEstate = true;
+      this.NewHousingEstate = item;
+      //清空验证信息
+      this.$nextTick(() => {
+        this.$refs["addHousingEstateRef"].clearValidate();
+      });
     },
 
     /**新增小区资料 */
     onHousingEstateAdd() {
+      //清除之前的对象
+      this.NewHousingEstate = {};
       //先判断省份是否加载完成
       if (!this.isEmpty(this.provinceList)) {
         this.dialogStatus = "add";
@@ -302,6 +426,10 @@ export default {
       } else {
         this.onLoadAllProvinceData(true);
       }
+      //清空验证信息
+      this.$nextTick(() => {
+        this.$refs["addHousingEstateRef"].clearValidate();
+      });
     },
 
     /**新增小区 */
@@ -341,9 +469,8 @@ export default {
       var that = this;
 
       var token = getToken();
-      this.$refs['addHousingEstateRef'].validate((valid) => {
+      this.$refs["addHousingEstateRef"].validate(valid => {
         if (valid) {
-
           var queryData = {
             id: that.NewHousingEstate.id,
             province: that.NewHousingEstate.province,
@@ -359,8 +486,10 @@ export default {
           };
 
           updateRegionHouse(queryData, token).then(result => {
-            const index = that.housingEstateList.findIndex(v => v.id === that.NewHousingEstate.id)
-            that.housingEstateList.splice(index, 1, that.NewHousingEstate)
+            const index = that.housingEstateList.findIndex(
+              v => v.id === that.NewHousingEstate.id
+            );
+            that.housingEstateList.splice(index, 1, that.NewHousingEstate);
             that.isShowDialogAddHousingEstate = false;
             that.$notify({
               title: "温馨提示",
@@ -395,6 +524,48 @@ export default {
           });
         })
         .catch(() => {});
+    },
+
+    /**显示新增车棚对话框 */
+    onShowAddBikeShedDialog(index, item) {
+      this.isShowDialogAddBikeShed = true;
+      this.NewHousingEstate = item;
+      this.NewBikeShed = {
+        regionHouseId: item.id,
+        houseName: item.houseName
+      };
+      //清空验证信息
+      this.$nextTick(() => {
+        this.$refs["addBikeShedRef"].clearValidate();
+      });
+    },
+
+    /**新增车棚 */
+    onAddBikeShed() {
+      var that = this;
+      this.$refs["addBikeShedRef"].validate(valid => {
+        if (valid) {
+          var queryData = {
+            regionHouseId: that.NewBikeShed.regionHouseId, //小区 ID
+            regionHouseName: that.NewBikeShed.regionHouseName, //小区名称
+            carName: that.NewBikeShed.carName, //车棚名称
+            carAddress: that.NewBikeShed.carAddress, //车棚地址
+            operationsPhone: that.NewBikeShed.operationsPhone, //车棚运维负责人电话
+            operationsName: that.NewBikeShed.operationsName, //车棚运维负责人姓名
+            bak: that.NewBikeShed.bak //备注
+          };
+
+          addCarPort(queryData).then(result => {
+            that.isShowDialogAddBikeShed = false;
+            this.$notify({
+              title: "温馨提示",
+              message: "新增车棚成功!",
+              type: "success",
+              duration: 2000
+            });
+          });
+        }
+      });
     },
 
     /**加载所有省份 */
@@ -435,6 +606,11 @@ export default {
           that.regionList = result.data;
         });
       }
+    },
+
+    /**重置按钮 */
+    onReset() {
+      this.searchKey = "";
     }
   }
 };

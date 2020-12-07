@@ -56,6 +56,17 @@ export function saveRegionHouse(data) {
 }
 
 /**
+ * 新增车棚
+ */
+export function addCarPort(data) {
+    return request({
+        url: '/carPort/addCarPort',
+        method: 'post',
+        data
+    })
+}
+
+/**
  * 删除小区
  */
 export function delRegionHouse(data) {
