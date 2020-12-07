@@ -10,3 +10,14 @@ export function queryCarPortPage(data) {
         params: data
     })
 }
+
+/**
+ * 删除车棚
+ */
+export function delCarPort(data) {
+    return request({
+        url: '/carPort/delCarPort',
+        method: 'get',
+        params: data
+    })
+}
