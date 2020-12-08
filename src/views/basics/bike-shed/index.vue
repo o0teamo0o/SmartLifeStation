@@ -50,15 +50,44 @@
     </el-table>
 
     <pagination v-show="total > 0" :total="total" :page.sync="pageNo" :limit.sync="pageSize" @pagination="onLoadBikeShedData" />
+
+    <el-dialog title="新增车棚" :visible.sync="isShowDialogUpdateBikeShed">
+      <el-form ref="updateBikeShedRef" :rules="updateBikeShedRules" :model="NewBikeShed" label-position="right" label-width="140px" style="width: 400px; margin-left: 50px">
+        <el-form-item label="所属小区：" prop="houseName">
+          <el-input v-model="NewBikeShed.houseName" disabled clearable />
+        </el-form-item>
+        <el-form-item label="车棚名称：" prop="carName">
+          <el-input v-model="NewBikeShed.carName" placeholder="请输入车棚名称" clearable />
+        </el-form-item>
+        <el-form-item label="车棚地址：" prop="carAddress">
+          <el-input v-model="NewBikeShed.carAddress" placeholder="请输入车棚地址" clearable />
+        </el-form-item>
+        <el-form-item label="车棚负责人电话：" prop="operationsPhone">
+          <el-input v-model="NewBikeShed.operationsPhone" placeholder="请输入车棚负责人电话" maxlength="12" clearable />
+        </el-form-item>
+        <el-form-item label="车棚负责人：" prop="operationsName">
+          <el-input v-model="NewBikeShed.operationsName" placeholder="请输入车棚负责人姓名" clearable />
+        </el-form-item>
+        <el-form-item label="备注：" prop="bak">
+          <el-input v-model="NewBikeShed.bak" placeholder="请输入备注" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowDialogUpdateBikeShed = false"> 取消 </el-button>
+        <el-button type="primary" @click="onUpdataBikeShed"> 更新 </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import { getToken } from "@/utils/auth";
 
 import {
   queryCarPortPage, // 加载车棚列表
   delCarPort, //删除车棚
+  updateCarPort, //更新车棚
 } from "@/api/basics/bikeShed";
 
 export default {
@@ -75,6 +104,31 @@ export default {
       pageNo: 1, // 分页页码
       bikeShedListKey: null, // 更新列表的key
       bikeShedList: null, // 车棚集合
+      isShowDialogUpdateBikeShed: false, // 是否显示新增车棚对话框
+      updateBikeShedRules: {
+        // 新增车棚表单验证规则
+        carName: [
+          { required: true, message: "请输入车棚名称", trigger: "blur" },
+        ],
+        carAddress: [
+          { required: true, message: "请输入车棚地址", trigger: "blur" },
+        ],
+        operationsPhone: [
+          {
+            required: true,
+            message: "请输入车棚运维负责人电话",
+            trigger: "blur",
+          },
+        ],
+        operationsName: [
+          {
+            required: true,
+            message: "请输入车棚运维负责人姓名",
+            trigger: "blur",
+          },
+        ],
+      },
+      NewBikeShed: {}, // 新增车棚对象
     };
   },
   mounted() {},
@@ -130,7 +184,50 @@ export default {
     onBikeShedAdd() {},
 
     /**编辑车棚 */
-    onBikeShedEdit() {},
+    onBikeShedEdit(index, item) {
+      this.isShowDialogUpdateBikeShed = true;
+      this.NewBikeShed = item;
+      // 清空验证信息
+      this.$nextTick(() => {
+        this.$refs["updateBikeShedRef"].clearValidate();
+      });
+    },
+
+    /**更新车棚信息 */
+    onUpdataBikeShed() {
+      var that = this;
+
+      var token = getToken();
+      this.$refs["updateBikeShedRef"].validate((valid) => {
+        if (valid) {
+          var queryData = {
+            id: that.NewBikeShed.id, //车棚编码
+            carCode: that.NewBikeShed.carCode, //车棚编码
+            carName: that.NewBikeShed.carName, //车棚名称
+            regionHouseId: that.NewBikeShed.regionHouseId, //地区ID
+            carAddress: that.NewBikeShed.carAddress, //车棚地址
+            operationsPhone: that.NewBikeShed.operationsPhone, //车棚运维负责人电话
+            operationsName: that.NewBikeShed.operationsName, //车棚运维负责人名称
+            bak: that.NewBikeShed.bak, //备注
+            regionHouseName: that.NewBikeShed.regionHouseName, //小区名称
+          };
+
+          updateCarPort(queryData, token).then((result) => {
+            const index = that.bikeShedList.findIndex(
+              (v) => v.id === that.NewBikeShed.id
+            );
+            that.bikeShedList.splice(index, 1, that.NewBikeShed);
+            that.isShowDialogUpdateBikeShed = false;
+            that.$notify({
+              title: "温馨提示",
+              message: "车棚更新成功!",
+              type: "success",
+              duration: 2000,
+            });
+          });
+        }
+      });
+    },
 
     /**删除车棚 */
     onBikeShedDelete(index, item) {

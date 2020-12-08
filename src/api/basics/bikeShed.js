@@ -21,3 +21,14 @@ export function delCarPort(data) {
         params: data
     })
 }
+
+/**
+ * 更新车棚
+ */
+export function updateCarPort(data) {
+    return request({
+        url: '/carPort/updateCarPort',
+        method: 'post',
+        data
+    })
+}
